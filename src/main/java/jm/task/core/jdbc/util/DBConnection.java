@@ -10,7 +10,7 @@ public class DBConnection {
     private static final String PASSWORD = "stepan";
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 
-    public static Connection getDBConnection() {
+    public static Connection getJdbcConnection() {
         Connection connection = null;
 
         try {
