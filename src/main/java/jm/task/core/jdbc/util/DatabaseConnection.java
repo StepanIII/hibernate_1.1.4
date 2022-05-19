@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DBConnection {
+public class DatabaseConnection {
     private static final String URL = "jdbc:mysql://localhost/kata_db";
     private static final String USERNAME = "stepan";
     private static final String PASSWORD = "stepan";
@@ -16,7 +16,6 @@ public class DBConnection {
         try {
             Class.forName(DRIVER);
             connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            connection.setAutoCommit(false);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
