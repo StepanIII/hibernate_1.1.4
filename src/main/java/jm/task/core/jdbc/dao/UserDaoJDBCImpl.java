@@ -11,18 +11,18 @@ public class UserDaoJDBCImpl implements UserDao {
 
     private final Connection connection = DatabaseConnection.getDBConnection();
 
-    private final String sqlCreateTable = """
+    private final String SQL_CREATE_TABLE = """
                     CREATE TABLE IF NOT EXISTS users 
                     (id INT PRIMARY KEY AUTO_INCREMENT, 
                     name VARCHAR(30),
                     lastName VARCHAR(30), 
                     age INT(3))
                     """;
-    private final String sqlDropUsersTable = "DROP TABLE IF EXISTS users";
-    private final String sqlSaveUser = "INSERT users(name, lastName, age) VALUE(?, ?, ?)";
-    private final String sqlRemoveUserById = "DELETE FROM users WHERE id = ?";
-    private final String sqlGetAllUsers = "SELECT * FROM users";
-    private final String sqlCleanUsersTable = "TRUNCATE users";
+    private final String SQL_DROP_USERS_TABLE = "DROP TABLE IF EXISTS users";
+    private final String SQL_SAVE_USER = "INSERT users(name, lastName, age) VALUE(?, ?, ?)";
+    private final String SQL_REMOVE_USER_BY_ID = "DELETE FROM users WHERE id = ?";
+    private final String SQL_GET_ALL_USERS = "SELECT * FROM users";
+    private final String SQL_CLEAN_USERS_TABLE = "TRUNCATE users";
 
     public UserDaoJDBCImpl() {
 
@@ -32,7 +32,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()) {
             connection.setAutoCommit(true);
 
-            statement.executeUpdate(sqlCreateTable);
+            statement.executeUpdate(SQL_CREATE_TABLE);
             System.out.println("Table users is created");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -43,7 +43,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()) {
             connection.setAutoCommit(true);
 
-            statement.executeUpdate(sqlDropUsersTable);
+            statement.executeUpdate(SQL_DROP_USERS_TABLE);
             System.out.println("Table users is drop");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -51,7 +51,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        try (PreparedStatement statement = connection.prepareStatement(sqlSaveUser)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_SAVE_USER)) {
             connection.setAutoCommit(false);
 
             statement.setString(1, name);
@@ -73,7 +73,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        try (PreparedStatement statement = connection.prepareStatement(sqlRemoveUserById)) {
+        try (PreparedStatement statement = connection.prepareStatement(SQL_REMOVE_USER_BY_ID)) {
             connection.setAutoCommit(false);
 
             statement.setLong(1, id);
@@ -94,7 +94,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
         try (Statement statement = connection.createStatement();
-             ResultSet set = statement.executeQuery(sqlGetAllUsers)) {
+             ResultSet set = statement.executeQuery(SQL_GET_ALL_USERS)) {
             connection.setAutoCommit(false);
 
             while (set.next()) {
@@ -120,7 +120,7 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Statement statement = connection.createStatement()) {
             connection.setAutoCommit(false);
 
-            statement.executeUpdate(sqlCleanUsersTable);
+            statement.executeUpdate(SQL_CLEAN_USERS_TABLE);
             connection.commit();
             System.out.println("Table is clean");
         } catch (SQLException throwables) {
