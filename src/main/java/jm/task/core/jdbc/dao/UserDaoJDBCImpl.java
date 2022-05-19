@@ -121,6 +121,7 @@ public class UserDaoJDBCImpl implements UserDao {
             CONNECTION.setAutoCommit(false);
 
             statement.executeUpdate(SQL_CLEAN_USERS_TABLE);
+
             CONNECTION.commit();
             System.out.println("Table is clean");
         } catch (SQLException throwables) {
