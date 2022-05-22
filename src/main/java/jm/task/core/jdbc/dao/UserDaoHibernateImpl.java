@@ -22,7 +22,7 @@ public class UserDaoHibernateImpl implements UserDao {
             """;
     private static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS users";
 
-    private static final String HQL_REMOVE_USER_BY_ID = "DELETE FROM User WHERE id = ";
+    private static final String HQL_REMOVE_USER_BY_ID = "DELETE FROM User WHERE id = :userId";
     private static final String HQL_GET_ALL_USERS = "FROM User";
     private static final String HQL_CLEAN_TABLE = "DELETE FROM User";
 
@@ -77,8 +77,10 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void removeUserById(long id) {
         Session session = sessionFactory.getCurrentSession();
+        session.beginTransaction();
         try {
-            Query query = session.createQuery(HQL_REMOVE_USER_BY_ID + id);
+            Query query = session.createQuery(HQL_REMOVE_USER_BY_ID);
+            query.setParameter("userId", id);
             query.executeUpdate();
             session.getTransaction().commit();
             System.out.println("Delete user with id - " + id);
