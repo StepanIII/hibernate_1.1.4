@@ -4,9 +4,9 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.DatabaseConnection;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
@@ -33,14 +33,14 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void createUsersTable() {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        session.beginTransaction();
         try {
             Query query = session.createSQLQuery(SQL_CREATE_TABLE);
             query.executeUpdate();
-            transaction.commit();
+            session.getTransaction().commit();
             System.out.println("User table is create.");
         } catch (Exception e) {
-            transaction.rollback();
+            session.getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -48,14 +48,14 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void dropUsersTable() {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        session.beginTransaction();
         try {
             Query query = session.createSQLQuery(SQL_DROP_TABLE);
             query.executeUpdate();
-            transaction.commit();
+            session.getTransaction().commit();
             System.out.println("User table is drop.");
         } catch (Exception e) {
-            transaction.rollback();
+            session.getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -63,13 +63,13 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void saveUser(String name, String lastName, byte age) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        session.beginTransaction();
         try {
             session.save(new User(name, lastName, age));
-            transaction.commit();
+            session.getTransaction().commit();
             System.out.println("Added user named - " + name + " to the database");
         } catch (Exception e) {
-            transaction.rollback();
+            session.getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -77,14 +77,13 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public void removeUserById(long id) {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
         try {
             Query query = session.createQuery(HQL_REMOVE_USER_BY_ID + id);
             query.executeUpdate();
-            transaction.commit();
+            session.getTransaction().commit();
             System.out.println("Delete user with id - " + id);
         } catch (Exception e) {
-            transaction.rollback();
+            session.getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -92,25 +91,32 @@ public class UserDaoHibernateImpl implements UserDao {
     @Override
     public List<User> getAllUsers() {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
-        Query query = session.createQuery(HQL_GET_ALL_USERS);
-        List<User> users = query.getResultList();
-        transaction.commit();
-        System.out.println("Got all users");
+        session.beginTransaction();
+        List<User> users = new ArrayList<>();
+        try {
+            Query query = session.createQuery(HQL_GET_ALL_USERS);
+            users = query.getResultList();
+            session.getTransaction().commit();
+            System.out.println("Got all users");
+            return users;
+        } catch (Exception e) {
+            session.getTransaction().rollback();
+            e.printStackTrace();
+        }
         return users;
     }
 
     @Override
     public void cleanUsersTable() {
         Session session = sessionFactory.getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        session.beginTransaction();
         try {
             Query query = session.createQuery(HQL_CLEAN_TABLE);
             query.executeUpdate();
-            transaction.commit();
+            session.getTransaction().commit();
             System.out.println("Clean table users");
         } catch (Exception e) {
-            transaction.rollback();
+            session.getTransaction().rollback();
             e.printStackTrace();
         }
     }
